@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#FAFAF7" />
+  <title>Aspire — Personal inflation, measured.</title>
+  <meta name="description" content="A financial cognition tool. Compute the inflation rate of the future you are actually trying to buy." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;450;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind Play CDN + design tokens -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['"Instrument Serif"', 'Georgia', 'serif'],
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
+          },
+          colors: {
+            ink: { DEFAULT: '#0F0F12', mute: '#5C5C66', faint: '#9D9DA6' },
+            paper: { DEFAULT: '#FAFAF7', dim: '#F1EFEA', deep: '#E9E6DF' },
+            line: 'rgba(15,15,18,0.08)',
+            'line-strong': 'rgba(15,15,18,0.14)',
+            accent: { 1: '#FF5E62', 2: '#FFB458' },
+            cool: '#2C5DDB',
+            good: '#0BA678',
+            bad: '#E84C4C',
+          },
+          letterSpacing: {
+            tightish: '-0.015em',
+            tighter2: '-0.025em',
+          },
+          fontSize: {
+            'micro': ['11px', { lineHeight: '1.4', letterSpacing: '0.08em' }],
+          },
+          maxWidth: {
+            'shell': '1440px',
+          },
+        }
+      }
+    };
+  </script>
+
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- Load libraries as ESM and expose on window. Then signal ready. -->
+  <script type="module">
+    try {
+      const [ReactNS, ReactDOMClient, FMNS, RechartsNS] = await Promise.all([
+        import('https://esm.sh/react@18.3.1'),
+        import('https://esm.sh/react-dom@18.3.1/client?external=react'),
+        import('https://esm.sh/framer-motion@11.11.17?external=react,react-dom'),
+        import('https://esm.sh/recharts@2.15.0?external=react,react-dom'),
+      ]);
+      window.React = ReactNS.default || ReactNS;
+      // Expose hooks on the React object too, in case default export is the namespace
+      Object.assign(window.React, ReactNS);
+      window.ReactDOMClient = ReactDOMClient;
+      window.FM = FMNS;
+      window.Recharts = RechartsNS;
+      window.__aspireReady = true;
+      window.dispatchEvent(new Event('aspire-ready'));
+    } catch (e) {
+      const el = document.querySelector('.boot-status');
+      if (el) el.textContent = 'Failed to load libraries · ' + (e?.message || e);
+      console.error('[aspire] library load failed', e);
+    }
+  </script>
+
+  <!-- Babel standalone (transpiles inline + external <script type="text/babel"> tags) -->
+  <script src="https://unpkg.com/@babel/standalone@7.25.6/babel.min.js"></script>
+</head>
+<body class="bg-paper text-ink antialiased">
+  <div id="root">
+    <div class="boot-screen">
+      <div class="boot-logo">
+        <svg viewBox="0 0 32 32" width="22" height="22">
+          <defs>
+            <linearGradient id="bootGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#FFB458"/>
+              <stop offset="100%" stop-color="#FF5E62"/>
+            </linearGradient>
+          </defs>
+          <path d="M4 24 L16 6 L28 24" stroke="url(#bootGrad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <circle cx="16" cy="6" r="2" fill="url(#bootGrad)"/>
+        </svg>
+        <span>Aspire</span>
+      </div>
+      <div class="boot-status">Initializing model…</div>
+    </div>
+  </div>
+
+  <!-- App: regular script (NOT module). Babel transpiles JSX. -->
+  <script type="text/babel" data-presets="react" src="script.js"></script>
+</body>
+</html>

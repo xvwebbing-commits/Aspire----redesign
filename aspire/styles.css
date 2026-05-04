@@ -1,0 +1,159 @@
+/* ============================================================
+   ASPIRE — base layer (most styling is Tailwind utilities;
+   this file holds resets, fonts, and a few primitives that
+   are awkward in pure utility classes).
+   ============================================================ */
+
+:root {
+  --ink: #0F0F12;
+  --paper: #FAFAF7;
+  --paper-dim: #F1EFEA;
+  --line: rgba(15, 15, 18, 0.08);
+  --line-strong: rgba(15, 15, 18, 0.14);
+  --accent-1: #FF5E62;
+  --accent-2: #FFB458;
+  --cool: #2C5DDB;
+  --good: #0BA678;
+  --bad: #E84C4C;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-feature-settings: 'cv11', 'ss01', 'ss03';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+*::selection { background: var(--accent-1); color: white; }
+
+/* Display font tweaks — Instrument Serif looks best with slight optical adjustments */
+.font-display {
+  font-feature-settings: 'liga', 'dlig';
+  font-synthesis: none;
+}
+
+/* Tabular numerics for all monospace + data displays */
+.font-mono, .tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Boot screen */
+.boot-screen {
+  position: fixed; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 16px;
+  background: var(--paper);
+  z-index: 100;
+  animation: bootFade 0.4s ease both;
+}
+.boot-logo {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-weight: 600; letter-spacing: -0.01em; font-size: 16px;
+  color: var(--ink);
+}
+.boot-status {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: rgba(15, 15, 18, 0.4);
+  text-transform: uppercase;
+  position: relative;
+}
+.boot-status::after {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-left: 6px;
+  border-radius: 50%;
+  background: var(--accent-1);
+  animation: bootPulse 1.2s ease-in-out infinite;
+  vertical-align: middle;
+}
+.boot-screen.gone {
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+@keyframes bootFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes bootPulse {
+  0%, 100% { opacity: 0.3; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+/* Form input reset — inputs/selects inherit from ink, no UA shadows */
+input, select, textarea, button {
+  font: inherit;
+  color: inherit;
+}
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] { -moz-appearance: textfield; }
+
+/* Smooth scroll within the document */
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
+
+/* Custom scrollbars (subtle, instrument-like) */
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb { background: rgba(15, 15, 18, 0.12); border-radius: 999px; border: 2px solid transparent; background-clip: padding-box; }
+*::-webkit-scrollbar-thumb:hover { background: rgba(15, 15, 18, 0.22); border: 2px solid transparent; background-clip: padding-box; }
+
+/* Recharts overrides — match the design language */
+.recharts-default-tooltip {
+  background: rgba(15, 15, 18, 0.96) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 10px !important;
+  padding: 10px 14px !important;
+  font-family: 'Inter', sans-serif !important;
+  box-shadow: 0 12px 32px -12px rgba(0, 0, 0, 0.4) !important;
+}
+.recharts-tooltip-label {
+  color: rgba(255, 255, 255, 0.6) !important;
+  font-size: 11px !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+  margin-bottom: 4px !important;
+}
+.recharts-tooltip-item { color: white !important; font-size: 13px !important; }
+.recharts-cartesian-axis-tick-value {
+  font-family: 'JetBrains Mono', monospace !important;
+  fill: rgba(15, 15, 18, 0.4) !important;
+}
+
+/* Accent gradient text helper */
+.gradient-text {
+  background: linear-gradient(135deg, #FFB458 0%, #FF5E62 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Hairline divider */
+.hairline { background: var(--line); height: 1px; width: 100%; }
+.hairline-v { background: var(--line); width: 1px; height: 100%; }
+
+/* "Inset" surface — subtle paper-deep card that sits in the layout */
+.surface {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+}
+.surface-dim {
+  background: var(--paper-dim);
+  border: 1px solid transparent;
+  border-radius: 12px;
+}
